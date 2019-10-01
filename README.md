@@ -56,4 +56,5 @@ The structure of the real system is visible in the following image:
 
 In order to validate the Protelis program in large-scale scenarios or in particular situations is possible to test the program in a another simulator: [Alchemist](https://alchemistsimulator.github.io). Alchemist is a stochastic simulator that support the execution of Protelis programs providing an implementation for the required back-end.
 In this case the structure of the system will be different (see image below) because we don't have a MQTT server were the sensors data are published by the sensor network, but the Protelis program will be the same.
+
 ![](system_with_alchemist.png)
