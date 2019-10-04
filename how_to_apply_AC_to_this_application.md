@@ -9,11 +9,11 @@ The mapping between physical world and aggregate program is the following:
 The following image is a rappresantation of this mapping:
 ![](image/mapping_physicalWorld_ac.png)
 
-Every node of the aggregate program retrieves the data of the physical counterpart from the MQTT server where it publishes them and can comunicate with the other nodes in its neighborhood. 
+Every node of the aggregate program retrieves the data of the physical counterpart from the MQTT server where it publishes them and can comunicate with the other nodes in its neighborhood.
 
 ## Creation of air quality map
 
-The idea is that each sensorN share their sensed data with their neighborhood to define air quality in that area.
+From aggregate abstraction PoV, the idea is that sensorNs generate computional field in spatio-time domain that rapresent air quality level in that area.
 It will be possible define different level of air quality to identify areas:
 - to avoid
 - to avoid if possible
@@ -21,14 +21,17 @@ It will be possible define different level of air quality to identify areas:
 
 ## Mobile sensor
 
-It will be necessary define how to treat mobile sensors, there are at least two possibilities:
+It will be necessary define how to treat mobile sensors data, there are more possibilities:
+ 1. sensed data is valid until next data is sensed. All work as for fixed sensor, but when the sensor change position previous data are discarded.
+
  1. sensed data is valid for fixed period of time. Data last over time, but when the sensor change position it is necessary create temporary node in aggregate program to rapresent previous data.
- 2. sensed data is valid until next data is sensed or the sensor change position. All work as for fixed sensor, but when the sensor change position previous data are discarded.
+
+ 1. use advanced techniques to information decay like exponential backoff. Data last over time and and will not be necessary temporary nodes.
 
 ## Creation of route
 
-The idea is that areas with poor air quality are obstacles that the user cannot across.
-The route to destinationN will be a sequence of point composed from position of sensors in areas with good air quality.
-The composition of the route will emerge from interaction between the nodes of aggregate program and the distance between the nodes and the level of air quality will be considered.
+The idea is that the user should avoid areas with poor air quality.
+The route to destinationN will be a sequence of point composed from position of sensors in areas with acceptable air quality.
+The composition of the path will emerge from the interaction between the nodes of the aggregate program, weighing routes with pollution level of the areas crossed.
 
 How apply a maximum delta respect to shortest route is a problem still under investigation.
