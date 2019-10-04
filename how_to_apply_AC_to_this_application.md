@@ -31,4 +31,4 @@ The idea is that areas with poor air quality are obstacles that the user cannot 
 The route to destinationN will be a sequence of point composed from position of sensors in areas with good air quality.
 The composition of the route will emerge from interaction between the nodes of aggregate program and the distance between the nodes and the level of air quality will be considered.
 
-How apply a maximum delta respect the shortest route is a problem still under investigation.
+How apply a maximum delta respect to shortest route is a problem still under investigation.
