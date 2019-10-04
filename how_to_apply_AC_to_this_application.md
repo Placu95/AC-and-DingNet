@@ -9,7 +9,7 @@ The mapping between physical world and aggregate program is the following:
 The following image is a rappresantation of this mapping:
 ![](image/mapping_physicalWorld_ac.png)
 
-Every node of the aggregate program retrieves the data of the physical counterpart from the MQTT server where it publishes them.
+Every node of the aggregate program retrieves the data of the physical counterpart from the MQTT server where it publishes them and can comunicate with the other nodes in its neighborhood. 
 
 ## Creation of air quality map
 
