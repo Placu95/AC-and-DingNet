@@ -12,7 +12,7 @@ import org.protelis.vm.NetworkManager
 
 data class MessageState(val payload: Map<CodePath, Any>)
 
-class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, applicationEUI: String, private var neighbors: Set<StringUID>): NetworkManager {
+class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, applicationEUI: String, private var neighbors: Set<StringUID> = emptySet()): NetworkManager {
 
     private val baseTopic: String =  "application/$applicationEUI/node/"
 
