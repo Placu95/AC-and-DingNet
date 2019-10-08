@@ -1,19 +1,19 @@
-package it.unibo.protelis.utils
+package it.unibo.protelis.executionContext
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.protelis.lang.datatype.DeviceUID
-import org.protelis.vm.NetworkManager
-import org.protelis.vm.impl.AbstractExecutionContext
-import kotlin.random.Random
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionEnvironment
+import org.protelis.vm.NetworkManager
+import org.protelis.vm.impl.AbstractExecutionContext
 import org.protelis.vm.impl.SimpleExecutionEnvironment
 import java.time.LocalDateTime
+import kotlin.random.Random
 
 abstract class MQTTExecutionContext(
     private val _deviceUID: StringUID,
@@ -21,7 +21,7 @@ abstract class MQTTExecutionContext(
     val mqttAddress: String,
     val netmgr: NetworkManager,
     val randomSeed: Int = 1,
-    private val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
+    protected val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
 ) : AbstractExecutionContext<MQTTExecutionContext>(execEnvironment, netmgr) {
 
     private val randomGenerator = Random(randomSeed)
