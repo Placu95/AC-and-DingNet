@@ -13,7 +13,7 @@ open class SensorNode(
     applicationUID: String,
     mqttAddress: String,
     position: GPSPosition,
-    sensorTypes: List<SensorType>) : GenericNode(protelisProgram, sensorDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
+    sensorTypes: List<SensorType>) : NodeWithSensor(protelisProgram, sensorDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
 
     override fun createContext(): ExecutionContext =
         SensorExecutionContext(this, applicationUID, mqttAddress, networkManager)
