@@ -8,16 +8,16 @@ import org.protelis.vm.ProtelisProgram
 import org.protelis.vm.ProtelisVM
 
 abstract class GenericNode(
-    private val protelisProgram: ProtelisProgram,
+    val protelisProgram: ProtelisProgram,
     val deviceUID: StringUID,
     val applicationUID: String,
     val mqttAddress: String,
     val position: GPSPosition
 ) {
 
-    val networkManager = MQTTNetworkManager(deviceUID, mqttAddress, applicationUID)
-    val executionContext by lazy { createContext() }
-    val protelisVM by lazy { ProtelisVM(protelisProgram, executionContext) }
+    protected val networkManager = MQTTNetworkManager(deviceUID, mqttAddress, applicationUID)
+    protected val executionContext by lazy { createContext() }
+    protected val protelisVM by lazy { ProtelisVM(protelisProgram, executionContext) }
 
     protected abstract fun createContext(): ExecutionContext
 }
