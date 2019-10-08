@@ -7,7 +7,7 @@ The mapping between physical world and aggregate program is the following:
 - every user destination is a node of aggregate program (from now on: destinationN)
 
 The following image is a rappresantation of this mapping:
-![](image/mapping_physicalWorld_ac.png)
+![](../image/mapping_physicalWorld_ac.png)
 
 Every node of the aggregate program retrieves the data of the physical counterpart from the MQTT server where it publishes them and can comunicate with the other nodes in its neighborhood.
 

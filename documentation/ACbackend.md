@@ -8,7 +8,7 @@ In this application we have three different typology of nodes with different cap
 
 The following image is a diagram of node modeling:
 
-![](image/nodeModel.png)
+![](../image/nodeModel.png)
 
 A protelis backend require to define for every kind of node:
 
@@ -19,7 +19,7 @@ A protelis backend require to define for every kind of node:
 
 The modeling of the execution context for *SensorNode* and *UserNode* is the following and below explained
 
-![](image/execContextModel_v2a.png)
+![](../image/execContextModel_v2a.png)
 
 - *MQTTExecutionContext* -> encapsulates the subscription to the MQTT server where the physical counterpart will publish its data
 - *PositionedMQTTExecutionContext* -> implements all the methods of the two interface for spatial capabilities
@@ -27,7 +27,7 @@ The modeling of the execution context for *SensorNode* and *UserNode* is the fol
 
 *DestinationNode* don't require to comunicate via MQTT with the physical counterpart (becuase there is not any physical counterpart), so its ExecutionContext is more simple and implements only the two interface for spatial capabilities. Its UML schema is the following:
 
-![](image/execContextModel_v2b.png)
+![](../image/execContextModel_v2b.png)
 
 ## Netwotk Manager
 Currently the Network Manager is based on MQTT as it is already used for the Execution context
