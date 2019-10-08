@@ -13,7 +13,7 @@ class UserNode(
     applicationUID: String,
     mqttAddress: String,
     position: GPSPosition,
-    sensorTypes: List<SensorType> = emptyList()) : GenericNode(protelisProgram, userDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
+    sensorTypes: List<SensorType> = emptyList()) : SensorNode(protelisProgram, userDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
 
     override fun createContext(): ExecutionContext =
         UserExecutionContext(this, applicationUID, mqttAddress, networkManager)

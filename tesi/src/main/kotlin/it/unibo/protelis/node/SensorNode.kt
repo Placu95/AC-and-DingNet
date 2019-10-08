@@ -7,7 +7,7 @@ import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
 import org.protelis.vm.ProtelisProgram
 
-class SensorNode(
+open class SensorNode(
     protelisProgram: ProtelisProgram,
     sensorDeviceUID: StringUID,
     applicationUID: String,
