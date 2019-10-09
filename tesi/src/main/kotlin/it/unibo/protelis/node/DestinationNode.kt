@@ -1,6 +1,6 @@
 package it.unibo.protelis.node
 
-import it.unibo.protelis.executionContext.DestinationExecutionContext
+import it.unibo.protelis.executioncontext.DestinationExecutionContext
 import it.unibo.protelis.model.GPSPosition
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext

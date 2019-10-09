@@ -1,4 +1,4 @@
-package it.unibo.protelis.executionContext
+package it.unibo.protelis.executioncontext
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

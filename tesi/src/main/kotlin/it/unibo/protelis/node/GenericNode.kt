@@ -1,7 +1,7 @@
 package it.unibo.protelis.node
 
 import it.unibo.protelis.model.GPSPosition
-import it.unibo.protelis.networManager.MQTTNetworkManager
+import it.unibo.protelis.networkmanager.MQTTNetworkManager
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
 import org.protelis.vm.ProtelisProgram

@@ -1,6 +1,6 @@
 package it.unibo.protelis.node
 
-import it.unibo.protelis.executionContext.UserExecutionContext
+import it.unibo.protelis.executioncontext.UserExecutionContext
 import it.unibo.protelis.model.GPSPosition
 import it.unibo.protelis.model.SensorType
 import org.protelis.lang.datatype.impl.StringUID

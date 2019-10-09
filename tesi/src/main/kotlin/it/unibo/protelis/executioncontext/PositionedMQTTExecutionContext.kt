@@ -1,4 +1,4 @@
-package it.unibo.protelis.executionContext
+package it.unibo.protelis.executioncontext
 
 import it.unibo.protelis.model.GPSPosition
 import org.protelis.lang.datatype.Field
