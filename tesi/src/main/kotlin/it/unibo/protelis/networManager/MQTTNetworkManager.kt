@@ -1,4 +1,4 @@
-package it.unibo.protelis.utils
+package it.unibo.protelis.networManager
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
