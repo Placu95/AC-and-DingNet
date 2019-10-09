@@ -8,11 +8,12 @@ import org.protelis.vm.ProtelisProgram
 
 class DestinationNode(
     protelisProgram: ProtelisProgram,
+    sleepTime: Long,
     destinationUID: StringUID,
     applicationUID: String,
     mqttAddress: String,
     position: GPSPosition
-) : GenericNode(protelisProgram, destinationUID, applicationUID, mqttAddress, position) {
+) : GenericNode(protelisProgram, sleepTime, destinationUID, applicationUID, mqttAddress, position) {
 
     override fun createContext(): ExecutionContext = DestinationExecutionContext(deviceUID, position, networkManager)
 }

@@ -9,6 +9,7 @@ import org.protelis.vm.ProtelisVM
 
 abstract class GenericNode(
     val protelisProgram: ProtelisProgram,
+    val sleepTime: Long,
     val deviceUID: StringUID,
     val applicationUID: String,
     val mqttAddress: String,
@@ -17,7 +18,9 @@ abstract class GenericNode(
 
     protected val networkManager = MQTTNetworkManager(deviceUID, mqttAddress, applicationUID)
     protected val executionContext by lazy { createContext() }
-    protected val protelisVM by lazy { ProtelisVM(protelisProgram, executionContext) }
+    private val protelisVM by lazy { ProtelisVM(protelisProgram, executionContext) }
 
     protected abstract fun createContext(): ExecutionContext
+
+    fun runVM() = protelisVM.runCycle()
 }
