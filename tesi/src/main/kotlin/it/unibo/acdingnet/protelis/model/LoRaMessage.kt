@@ -1,4 +1,4 @@
-package it.unibo.protelis.model
+package it.unibo.acdingnet.protelis.model
 
 interface LoRaHeader {
     val header: String

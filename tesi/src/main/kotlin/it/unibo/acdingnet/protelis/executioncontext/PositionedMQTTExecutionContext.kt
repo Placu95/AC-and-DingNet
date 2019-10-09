@@ -1,6 +1,6 @@
-package it.unibo.protelis.executioncontext
+package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.GPSPosition
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
 import org.protelis.lang.datatype.impl.ArrayTupleImpl
@@ -12,13 +12,13 @@ import org.protelis.vm.SpatiallyEmbeddedDevice
 import org.protelis.vm.impl.SimpleExecutionEnvironment
 
 abstract class PositionedMQTTExecutionContext(
-        deviceUID: StringUID,
-        val nodePosition: GPSPosition,
-        applicationUID: String,
-        mqttAddress: String,
-        netmgr: NetworkManager,
-        randomSeed: Int = 1,
-        execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
+    deviceUID: StringUID,
+    val nodePosition: GPSPosition,
+    applicationUID: String,
+    mqttAddress: String,
+    netmgr: NetworkManager,
+    randomSeed: Int = 1,
+    execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
     ) :
     MQTTExecutionContext(deviceUID, applicationUID, mqttAddress, netmgr, randomSeed, execEnvironment),
     LocalizedDevice, SpatiallyEmbeddedDevice<Double> {

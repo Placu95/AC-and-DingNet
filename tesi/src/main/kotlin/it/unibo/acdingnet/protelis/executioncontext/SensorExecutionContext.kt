@@ -1,7 +1,7 @@
-package it.unibo.protelis.executioncontext
+package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.protelis.model.LoRaSensorMessage
-import it.unibo.protelis.node.SensorNode
+import it.unibo.acdingnet.protelis.model.LoRaSensorMessage
+import it.unibo.acdingnet.protelis.node.SensorNode
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager

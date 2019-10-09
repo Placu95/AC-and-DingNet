@@ -1,4 +1,4 @@
-package it.unibo.protelis.networkmanager
+package it.unibo.acdingnet.protelis.networkmanager
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -35,7 +35,11 @@ class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, applic
     }
 
     override fun shareState(toSend: Map<CodePath, Any>): Unit =
-        mqttClient.publish(getMqttStateTopicByDevice(deviceUID), toMqtt(MessageState(toSend)))
+        mqttClient.publish(getMqttStateTopicByDevice(deviceUID), toMqtt(
+            MessageState(
+                toSend
+            )
+        ))
 
     //TODO to test this
     private fun toMqtt(message: MessageState): MqttMessage = MqttMessage(gson.toJson(message).toByteArray(Charsets.US_ASCII))

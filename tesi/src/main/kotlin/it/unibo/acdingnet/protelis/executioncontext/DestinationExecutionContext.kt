@@ -1,6 +1,6 @@
-package it.unibo.protelis.executioncontext
+package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.GPSPosition
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
@@ -16,11 +16,11 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 class DestinationExecutionContext(
-        private val _deviceUID: StringUID,
-        private val nodePosition: GPSPosition,
-        private val netmgr: NetworkManager,
-        private val randomSeed: Int = 1,
-        private val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
+    private val _deviceUID: StringUID,
+    private val nodePosition: GPSPosition,
+    private val netmgr: NetworkManager,
+    private val randomSeed: Int = 1,
+    private val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
     ) : AbstractExecutionContext<DestinationExecutionContext>(execEnvironment, netmgr),
         LocalizedDevice, SpatiallyEmbeddedDevice<Double> {
 
@@ -33,7 +33,14 @@ class DestinationExecutionContext(
     override fun getDeviceUID(): DeviceUID = _deviceUID
     override fun getCurrentTime(): Number = LocalDateTime.now().second
 
-    override fun instance(): DestinationExecutionContext = DestinationExecutionContext(_deviceUID, nodePosition, netmgr, randomSeed, execEnvironment)
+    override fun instance(): DestinationExecutionContext =
+        DestinationExecutionContext(
+            _deviceUID,
+            nodePosition,
+            netmgr,
+            randomSeed,
+            execEnvironment
+        )
 
     override fun getCoordinates(): Tuple = _coordinates
     override fun nbrVector(): Field<Tuple> = TODO("not implemented")
