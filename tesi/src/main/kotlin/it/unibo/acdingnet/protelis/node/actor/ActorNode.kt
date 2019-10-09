@@ -6,7 +6,7 @@ import akka.actor.Props
 import akka.japi.pf.ReceiveBuilder
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.SensorType
 import it.unibo.acdingnet.protelis.node.DestinationNode
 import it.unibo.acdingnet.protelis.node.GenericNode
@@ -47,7 +47,7 @@ object ActorNodeFactory {
     ) }
 
     fun createDestinationNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
-                              destinationUID: StringUID, position: GPSPosition) =
+                              destinationUID: StringUID, position: LatLongPosition) =
         createActorWithNode(
             DestinationNode(
                 protelisProgram,
@@ -60,7 +60,7 @@ object ActorNodeFactory {
         )
 
     fun createSensorNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
-                         sensorDeviceUID: StringUID, position: GPSPosition, sensorTypes: List<SensorType>) =
+                         sensorDeviceUID: StringUID, position: LatLongPosition, sensorTypes: List<SensorType>) =
         createActorWithNode(
             SensorNode(
                 protelisProgram,
@@ -74,7 +74,7 @@ object ActorNodeFactory {
         )
 
     fun createUserNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
-                       userUID: StringUID, position: GPSPosition, sensorTypes: List<SensorType> = emptyList()) =
+                       userUID: StringUID, position: LatLongPosition, sensorTypes: List<SensorType> = emptyList()) =
         createActorWithNode(
             UserNode(
                 protelisProgram,

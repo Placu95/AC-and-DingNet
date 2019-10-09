@@ -1,6 +1,6 @@
 package it.unibo.acdingnet.protelis.node
 
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.networkmanager.MQTTNetworkManager
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
@@ -13,7 +13,7 @@ abstract class GenericNode(
     val deviceUID: StringUID,
     val applicationUID: String,
     val mqttAddress: String,
-    val position: GPSPosition
+    val position: LatLongPosition
 ) {
 
     protected val networkManager =

@@ -1,6 +1,6 @@
 package it.unibo.acdingnet.protelis.node
 
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.SensorType
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ProtelisProgram
@@ -11,6 +11,6 @@ abstract class NodeWithSensor(
     sensorDeviceUID: StringUID,
     applicationUID: String,
     mqttAddress: String,
-    position: GPSPosition,
+    position: LatLongPosition,
     val sensorTypes: List<SensorType>
     ) : GenericNode(protelisProgram, sleepTime, sensorDeviceUID, applicationUID, mqttAddress, position)

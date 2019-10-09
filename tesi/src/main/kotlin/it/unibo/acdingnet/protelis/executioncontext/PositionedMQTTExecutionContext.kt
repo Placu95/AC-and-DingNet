@@ -1,6 +1,6 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
 import org.protelis.lang.datatype.impl.ArrayTupleImpl
@@ -13,7 +13,7 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment
 
 abstract class PositionedMQTTExecutionContext(
     deviceUID: StringUID,
-    val nodePosition: GPSPosition,
+    val nodePosition: LatLongPosition,
     applicationUID: String,
     mqttAddress: String,
     netmgr: NetworkManager,

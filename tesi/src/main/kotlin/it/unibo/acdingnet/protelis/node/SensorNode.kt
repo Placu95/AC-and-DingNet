@@ -1,7 +1,7 @@
 package it.unibo.acdingnet.protelis.node
 
 import it.unibo.acdingnet.protelis.executioncontext.SensorExecutionContext
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.SensorType
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
@@ -15,7 +15,7 @@ open class SensorNode(
     sensorDeviceUID: StringUID,
     applicationUID: String,
     mqttAddress: String,
-    position: GPSPosition,
+    position: LatLongPosition,
     sensorTypes: List<SensorType>) : NodeWithSensor(protelisProgram, sleepTime, sensorDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
 
     override fun createContext(): ExecutionContext =

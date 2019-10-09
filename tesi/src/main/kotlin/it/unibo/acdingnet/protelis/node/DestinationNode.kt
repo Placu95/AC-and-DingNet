@@ -1,7 +1,7 @@
 package it.unibo.acdingnet.protelis.node
 
 import it.unibo.acdingnet.protelis.executioncontext.DestinationExecutionContext
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
 import org.protelis.vm.ProtelisProgram
@@ -12,7 +12,7 @@ class DestinationNode(
     destinationUID: StringUID,
     applicationUID: String,
     mqttAddress: String,
-    position: GPSPosition
+    position: LatLongPosition
 ) : GenericNode(protelisProgram, sleepTime, destinationUID, applicationUID, mqttAddress, position) {
 
     override fun createContext(): ExecutionContext =

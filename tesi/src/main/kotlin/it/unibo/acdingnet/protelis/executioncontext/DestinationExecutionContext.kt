@@ -1,6 +1,6 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.acdingnet.protelis.model.GPSPosition
+import it.unibo.acdingnet.protelis.model.LatLongPosition
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
@@ -17,7 +17,7 @@ import kotlin.random.Random
 
 class DestinationExecutionContext(
     private val _deviceUID: StringUID,
-    private val nodePosition: GPSPosition,
+    private val nodePosition: LatLongPosition,
     private val netmgr: NetworkManager,
     private val randomSeed: Int = 1,
     private val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
