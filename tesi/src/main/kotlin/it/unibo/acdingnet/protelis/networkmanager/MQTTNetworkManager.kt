@@ -12,15 +12,16 @@ import org.protelis.vm.NetworkManager
 
 data class MessageState(val payload: Map<CodePath, Any>)
 
-class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, applicationEUI: String, private var neighbors: Set<StringUID> = emptySet()): NetworkManager {
+open class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, applicationEUI: String, private var neighbors: Set<StringUID> = emptySet()): NetworkManager {
 
-    private val baseTopic: String =  "application/$applicationEUI/node/"
+    protected val baseTopic: String =  "application/$applicationEUI/node/"
 
     private var messages: Map<DeviceUID, Map<CodePath, Any>> = emptyMap()
-    private var mqttClient = MqttClient(serverAddress, "", MemoryPersistence())
-    private val gson: Gson = GsonBuilder().create()
+    protected var mqttClient = MqttClient(serverAddress, "", MemoryPersistence())
+    protected val gson: Gson = GsonBuilder().create()
 
     init {
+        mqttClient.connect()
         //TODO init subscription - test it
         neighbors.forEach{subscribeToMqtt(it)}
     }
