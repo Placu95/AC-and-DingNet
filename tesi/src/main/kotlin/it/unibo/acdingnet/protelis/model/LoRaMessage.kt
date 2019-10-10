@@ -19,7 +19,7 @@ interface LoRaSensorPayload: LoRaPayload {
 }
 
 interface LoRaUserPayload: LoRaSensorPayload {
-    val destination: LatLongPosition
+    val destination: LatLongPosition?
 }
 
 data class EmptyLoRaHeader(override val header: String): LoRaHeader
@@ -43,7 +43,7 @@ data class LoRaSensorMessage(val header: String = "", val payload: LoRaSensorPay
 data class LoRaUserPayloadImpl(
     override val time: Int,
     override val position: LatLongPosition,
-    override val destination: LatLongPosition,
+    override val destination: LatLongPosition?,
     override val sensorsData: List<SensorData> = emptyList()
 ): LoRaUserPayload {
     override fun payloadToString(): String = "[" +
