@@ -1,4 +1,4 @@
-package it.unibo.acdingnet.protelis
+package it.unibo.acdingnet.protelis.neighborhood
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -9,14 +9,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.protelis.lang.datatype.impl.StringUID
 
-class NeighborhoodMessage(val type: MessageType, val node: Node) {
+data class NeighborhoodMessage(val type: MessageType, val node: Node) {
 
     enum class MessageType {ADD, UPDATE, LEAVE}
 }
 
-class NewNeighborhoodMessage(val neighborhood: Set<Node>)
+data class NewNeighborhoodMessage(val neighborhood: Set<Node>)
 
-class Node(val uid: StringUID, var position: LatLongPosition) {
+data class Node(val uid: StringUID, var position: LatLongPosition) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,7 +40,7 @@ class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, v
     private val subscribedTopic: String = "application/$applicationUID/neighborhoodManager"
     private val mqttClient = MqttClient(mqttAddress, "", MemoryPersistence()).also {
         it.connect(MqttConnectOptions().also { it.isCleanSession = true })
-        it.subscribe(subscribedTopic) {topic, message ->
+        it.subscribe(subscribedTopic) {_, message ->
             val msg = gson.fromJson("$message", NeighborhoodMessage::class.java)
             when(msg.type) {
                 NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
@@ -52,27 +52,37 @@ class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, v
     private fun addNode(node: Node) {
         val nodeNeighborhood = neighborhood.keys.filter { node.position.distanceTo(it.position) < range }.toSet()
         neighborhood += (node to nodeNeighborhood)
-        nodeNeighborhood.forEach{ neighborhood[it]!!.plus(node) }
-        //TODO send reply with neighbors
-        //TODO send update to all modified node
+        //send reply with neighbors
+        sendUpdateNeighborhood(node, nodeNeighborhood)
+        //send update to all modified node
+        nodeNeighborhood.forEach{
+            neighborhood[it]!!.plus(node)
+            sendUpdateNeighborhood(it, neighborhood[it]!!)
+        }
     }
 
     private fun removeNode(node: Node) {
         val nodeNeighborhood = neighborhood[node]
         neighborhood -= node
-        nodeNeighborhood!!.forEach{ neighborhood[it]!!.minus(node) }
-        //TODO send update to all modified node
+        //send update to all modified node
+        nodeNeighborhood!!.forEach{
+            neighborhood[it]!!.minus(node)
+            sendUpdateNeighborhood(it, neighborhood[it]!!)
+        }
     }
 
     private fun updateNode(node: Node) {
-        val newNeighborhood = neighborhood.keys.filter { node.position.distanceTo(it.position) < range }.toSet()
+        val newNeighborhood = neighborhood.keys.filter { it != node && node.position.distanceTo(it.position) < range }.toSet()
         val neighborsAdded = newNeighborhood.filter { !neighborhood[node]!!.contains(it) }.also {
             it.forEach{ neighborhood[it]!!.plus(node) }
         }
         val neighborsRemoved = neighborhood[node]!!.filter { !newNeighborhood.contains(it) }.also {
             it.forEach{ neighborhood[it]!!.minus(node) }
         }
-        //TODO send update to node, neighborsAdded, neighborsRemoved
+        neighborhood[node] = newNeighborhood
+        sendUpdateNeighborhood(node, newNeighborhood)
+        neighborsAdded.forEach { sendUpdateNeighborhood(it, neighborhood[it]!!) }
+        neighborsRemoved.forEach { sendUpdateNeighborhood(it, neighborhood[it]!!) }
     }
 
     //TODO test
