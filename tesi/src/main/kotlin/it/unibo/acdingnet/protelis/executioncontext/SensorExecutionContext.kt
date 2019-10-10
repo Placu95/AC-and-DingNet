@@ -14,7 +14,7 @@ class SensorExecutionContext(
     netmgr: NetworkManager,
     randomSeed: Int = 1,
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
-    ): PositionedMQTTExecutionContext(sensorNode.deviceUID, sensorNode.position, applicationUID, mqttAddress, netmgr, randomSeed, execEnvironment) {
+    ): PositionedMQTTExecutionContext(sensorNode, applicationUID, mqttAddress, netmgr, randomSeed, execEnvironment) {
 
     override fun instance(): SensorExecutionContext =
         SensorExecutionContext(
@@ -27,8 +27,8 @@ class SensorExecutionContext(
         )
 
     override fun handleDefaultTopic(topic: String, message: MqttMessage) {
-        gson.fromJson("$message", LoRaSensorMessage::class.java).payload.sensorsData.forEach{
-            execEnvironment.put(it.sensorType.type, it.sensorValue)
-        }
+        val msg = gson.fromJson("$message", LoRaSensorMessage::class.java)
+        msg.payload.sensorsData.forEach{ execEnvironment.put(it.sensorType.type, it.sensorValue) } //todo check time property
+        msg.payload.position?.let { sensorNode.position = it }
     }
 }
