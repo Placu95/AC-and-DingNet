@@ -14,4 +14,8 @@ data class LatLongPosition(val latitude: Double, val longitude: Double) {
         val y = (posLatR - latR)
         return Math.sqrt(x * x + y * y)
     }
+
+    companion object {
+        fun zero() = LatLongPosition(0.0,0.0)
+    }
 }
