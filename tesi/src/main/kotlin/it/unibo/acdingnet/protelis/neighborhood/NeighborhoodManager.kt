@@ -3,10 +3,8 @@ package it.unibo.acdingnet.protelis.neighborhood
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.model.LatLongPosition
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
+import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
 import org.protelis.lang.datatype.impl.StringUID
 
 data class NeighborhoodMessage(val type: MessageType, val node: Node) {
@@ -38,10 +36,10 @@ class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, v
 
     private val gson: Gson = GsonBuilder().create()
     private val subscribedTopic: String = "application/$applicationUID/neighborhoodManager"
-    private val mqttClient = MqttClient(mqttAddress, "", MemoryPersistence()).also {
-        it.connect(MqttConnectOptions().also { it.isCleanSession = true })
+    private val mqttClient: MqttClientBasicApi = MqttClientPaho(mqttAddress, "").also {
+        it.connect()
         it.subscribe(subscribedTopic) {_, message ->
-            val msg = gson.fromJson("$message", NeighborhoodMessage::class.java)
+            val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
             when(msg.type) {
                 NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
                 NeighborhoodMessage.MessageType.LEAVE -> removeNode(msg.node)
@@ -89,7 +87,7 @@ class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, v
     private fun sendUpdateNeighborhood(node: Node, neighborhood: Set<Node>) {
         mqttClient.publish(
             getNodeTopic(node),
-            MqttMessage(gson.toJson(NewNeighborhoodMessage(neighborhood)).toByteArray(Charsets.US_ASCII)))
+            gson.toJson(NewNeighborhoodMessage(neighborhood)).toByteArray(Charsets.US_ASCII))
     }
 
     private fun getNodeTopic(node: Node) = "application/$applicationUID/node/${node.uid}/neighborhood"

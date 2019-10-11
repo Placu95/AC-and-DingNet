@@ -2,9 +2,8 @@ package it.unibo.acdingnet.protelis.networkmanager
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
+import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.CodePath
@@ -17,12 +16,12 @@ open class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, a
     protected val baseTopic: String =  "application/$applicationEUI/node/"
 
     private var messages: Map<DeviceUID, Map<CodePath, Any>> = emptyMap()
-    protected var mqttClient = MqttClient(serverAddress, "", MemoryPersistence())
+    protected var mqttClient: MqttClientBasicApi = MqttClientPaho(serverAddress, "")
     protected val gson: Gson = GsonBuilder().create()
 
     init {
         mqttClient.connect()
-        //TODO init subscription - test it
+        //TODO test it
         neighbors.forEach{subscribeToMqtt(it)}
     }
 
@@ -30,24 +29,18 @@ open class MQTTNetworkManager(val deviceUID: StringUID, serverAddress: String, a
 
     private fun subscribeToMqtt(deviceUID: StringUID) {
         mqttClient.subscribe(getMqttStateTopicByDevice(deviceUID)) { _, message ->
-            val msg = gson.fromJson("$message", MessageState::class.java).payload
-            messages += Pair(deviceUID, msg)
+            val msg = gson.fromJson(message, MessageState::class.java).payload
+            messages += deviceUID to msg
         }
     }
 
     override fun shareState(toSend: Map<CodePath, Any>): Unit =
-        mqttClient.publish(getMqttStateTopicByDevice(deviceUID), toMqtt(
-            MessageState(
-                toSend
-            )
-        ))
+        mqttClient.publish(getMqttStateTopicByDevice(deviceUID), toMqttMessage(MessageState(toSend)))
 
-    //TODO to test this
-    private fun toMqtt(message: MessageState): MqttMessage = MqttMessage(gson.toJson(message).toByteArray(Charsets.US_ASCII))
+    private fun toMqttMessage(message: MessageState): String = gson.toJson(message)
 
     override fun getNeighborState(): Map<DeviceUID, Map<CodePath, Any>> = messages.apply { messages = emptyMap() }
 
-    //TODO use mqtt here???
     fun setNeighbors(neighbors: Set<StringUID>) {
         //remove sensor not more neighbors
         this.neighbors.filter { !neighbors.contains(it) }.forEach{mqttClient.unsubscribe(getMqttStateTopicByDevice(it))}

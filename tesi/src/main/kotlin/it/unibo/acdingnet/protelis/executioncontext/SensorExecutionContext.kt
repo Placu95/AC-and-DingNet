@@ -2,7 +2,6 @@ package it.unibo.acdingnet.protelis.executioncontext
 
 import it.unibo.acdingnet.protelis.model.LoRaSensorMessage
 import it.unibo.acdingnet.protelis.node.SensorNode
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
@@ -26,9 +25,9 @@ class SensorExecutionContext(
             execEnvironment
         )
 
-    override fun handleDefaultTopic(topic: String, message: MqttMessage) {
-        val msg = gson.fromJson("$message", LoRaSensorMessage::class.java)
-        msg.payload.sensorsData.forEach{ execEnvironment.put(it.sensorType.type, it.sensorValue) } //todo check time property
+    override fun handleDefaultTopic(topic: String, message: String) {
+        val msg = gson.fromJson(message, LoRaSensorMessage::class.java)
+        msg.payload.sensorsData.forEach{ execEnvironment.put(it.sensorType.type, it.sensorValue) } //todo use order of the list check time property
         msg.payload.position?.let { sensorNode.position = it }
     }
 }

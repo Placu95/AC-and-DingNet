@@ -3,7 +3,6 @@ package it.unibo.acdingnet.protelis.executioncontext
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.LoRaUserMessage
 import it.unibo.acdingnet.protelis.node.UserNode
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
@@ -30,8 +29,8 @@ class UserExecutionContext(
         )
 
     //TODO
-    override fun handleDefaultTopic(topic: String, message: MqttMessage) {
-        val msg = gson.fromJson("$message", LoRaUserMessage::class.java)
+    override fun handleDefaultTopic(topic: String, message: String) {
+        val msg = gson.fromJson(message, LoRaUserMessage::class.java)
         msg.payload.sensorsData.forEach{ execEnvironment.put(it.sensorType.type, it.sensorValue) }
         //TODO put environment variable to start the path
         //update position

@@ -2,10 +2,8 @@ package it.unibo.acdingnet.protelis.executioncontext
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
+import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionEnvironment
@@ -31,12 +29,12 @@ abstract class MQTTExecutionContext(
     private val baseTopic: String = "application/$applicationUID/node/${_deviceUID.uid}/"
     private val receiveTopic: String = "${baseTopic}rx"
 
-    protected val mqttClient = MqttClient(mqttAddress, "", MemoryPersistence()).also {
-        it.connect(MqttConnectOptions().also { it.isCleanSession = true })
-        it.subscribe(receiveTopic) {topic, message -> handleDefaultTopic(topic, message)}
+    protected val mqttClient: MqttClientBasicApi = MqttClientPaho(mqttAddress, "").also {
+        it.connect()
+        it.subscribe(receiveTopic, this::handleDefaultTopic)
     }
 
-    protected abstract fun handleDefaultTopic(topic: String, message: MqttMessage)
+    protected abstract fun handleDefaultTopic(topic: String, message: String)
     //endregion
 
     override fun nextRandomDouble(): Double = randomGenerator.nextDouble()

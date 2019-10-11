@@ -5,7 +5,6 @@ import it.unibo.acdingnet.protelis.neighborhood.NeighborhoodMessage
 import it.unibo.acdingnet.protelis.neighborhood.NeighborhoodMessage.MessageType
 import it.unibo.acdingnet.protelis.neighborhood.NewNeighborhoodMessage
 import it.unibo.acdingnet.protelis.neighborhood.Node
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.protelis.lang.datatype.impl.StringUID
 
 class MQTTNetMgrWithMQTTNeighborhoodMgr(
@@ -20,7 +19,7 @@ class MQTTNetMgrWithMQTTNeighborhoodMgr(
 
     init {
         mqttClient.subscribe(subscribeOnTopic) {
-            _, message ->  setNeighbors(neighbors = gson.fromJson("$message", NewNeighborhoodMessage::class.java)
+            _, message ->  setNeighbors(gson.fromJson(message, NewNeighborhoodMessage::class.java)
                 .neighborhood.map { it.uid }.toSet())
         }
 
@@ -42,6 +41,6 @@ class MQTTNetMgrWithMQTTNeighborhoodMgr(
         generateMessage(type, Node(uid, position))
 
     private fun generateMessage(type: MessageType, node: Node) =
-        MqttMessage(gson.toJson(NeighborhoodMessage(type, node)).toByteArray(Charsets.US_ASCII))
+        gson.toJson(NeighborhoodMessage(type, node)).toByteArray(Charsets.US_ASCII)
 
 }
