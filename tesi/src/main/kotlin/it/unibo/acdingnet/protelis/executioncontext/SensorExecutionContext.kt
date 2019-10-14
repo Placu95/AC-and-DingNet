@@ -1,6 +1,7 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
 import it.unibo.acdingnet.protelis.model.LoRaSensorMessage
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.SensorNode
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
@@ -9,17 +10,17 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment
 class SensorExecutionContext(
     private val sensorNode: SensorNode,
     applicationUID: String,
-    mqttAddress: String,
+    mqttClient: MqttClientBasicApi,
     netmgr: NetworkManager,
     randomSeed: Int = 1,
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
-    ): PositionedMQTTExecutionContext(sensorNode, applicationUID, mqttAddress, netmgr, randomSeed, execEnvironment) {
+    ): PositionedMQTTExecutionContext(sensorNode, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
 
     override fun instance(): SensorExecutionContext =
         SensorExecutionContext(
             sensorNode,
             applicationUID,
-            mqttAddress,
+            mqttClient,
             netmgr,
             randomSeed,
             execEnvironment

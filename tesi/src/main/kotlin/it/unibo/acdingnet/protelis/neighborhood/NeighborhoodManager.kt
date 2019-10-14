@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
-import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
 import org.protelis.lang.datatype.impl.StringUID
 
 data class NeighborhoodMessage(val type: MessageType, val node: Node) {
@@ -30,31 +29,33 @@ data class Node(val uid: StringUID, var position: LatLongPosition) {
 /**
  * Simple NeighborhoodManager that suppose symmetric distance between two position
  */
-class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, val range: Double) {
+class NeighborhoodManager(val applicationUID: String, private val mqttClient: MqttClientBasicApi, val range: Double) {
 
-    val neighborhood: MutableMap<Node, Set<Node>> = mutableMapOf()
+    val neighborhood: MutableMap<Node, MutableSet<Node>> = mutableMapOf()
 
     private val gson: Gson = GsonBuilder().create()
     private val subscribedTopic: String = "application/$applicationUID/neighborhoodManager"
-    private val mqttClient: MqttClientBasicApi = MqttClientPaho(mqttAddress, "").also {
-        it.connect()
-        it.subscribe(subscribedTopic) {_, message ->
-            val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
-            when(msg.type) {
-                NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
-                NeighborhoodMessage.MessageType.LEAVE -> removeNode(msg.node)
-                NeighborhoodMessage.MessageType.UPDATE -> updateNode(msg.node)
-            }}
+
+    init {
+        mqttClient.connect()
+        mqttClient.subscribe(subscribedTopic) {_, message ->
+                val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
+                when(msg.type) {
+                    NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
+                    NeighborhoodMessage.MessageType.LEAVE -> removeNode(msg.node)
+                    NeighborhoodMessage.MessageType.UPDATE -> updateNode(msg.node)
+                }
+        }
     }
 
     private fun addNode(node: Node) {
-        val nodeNeighborhood = neighborhood.keys.filter { node.position.distanceTo(it.position) < range }.toSet()
+        val nodeNeighborhood = neighborhood.keys.filter { node.position.distanceTo(it.position) < range }.toMutableSet()
         neighborhood += (node to nodeNeighborhood)
         //send reply with neighbors
         sendUpdateNeighborhood(node, nodeNeighborhood)
         //send update to all modified node
         nodeNeighborhood.forEach{
-            neighborhood[it]!!.plus(node)
+            neighborhood[it]!! += node
             sendUpdateNeighborhood(it, neighborhood[it]!!)
         }
     }
@@ -64,18 +65,18 @@ class NeighborhoodManager(val applicationUID: String, val mqttAddress: String, v
         neighborhood -= node
         //send update to all modified node
         nodeNeighborhood!!.forEach{
-            neighborhood[it]!!.minus(node)
+            neighborhood[it]!! -= node
             sendUpdateNeighborhood(it, neighborhood[it]!!)
         }
     }
 
     private fun updateNode(node: Node) {
-        val newNeighborhood = neighborhood.keys.filter { it != node && node.position.distanceTo(it.position) < range }.toSet()
+        val newNeighborhood = neighborhood.keys.filter { it != node && node.position.distanceTo(it.position) < range }.toMutableSet()
         val neighborsAdded = newNeighborhood.filter { !neighborhood[node]!!.contains(it) }.also {
-            it.forEach{ neighborhood[it]!!.plus(node) }
+            it.forEach{ neighborhood[it]!! += node }
         }
         val neighborsRemoved = neighborhood[node]!!.filter { !newNeighborhood.contains(it) }.also {
-            it.forEach{ neighborhood[it]!!.minus(node) }
+            it.forEach{ neighborhood[it]!! -= node }
         }
         neighborhood[node] = newNeighborhood
         sendUpdateNeighborhood(node, newNeighborhood)

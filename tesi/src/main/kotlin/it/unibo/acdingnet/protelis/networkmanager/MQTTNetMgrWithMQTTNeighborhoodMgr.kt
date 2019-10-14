@@ -1,6 +1,7 @@
 package it.unibo.acdingnet.protelis.networkmanager
 
 import it.unibo.acdingnet.protelis.model.LatLongPosition
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.neighborhood.NeighborhoodMessage
 import it.unibo.acdingnet.protelis.neighborhood.NeighborhoodMessage.MessageType
 import it.unibo.acdingnet.protelis.neighborhood.NewNeighborhoodMessage
@@ -9,10 +10,10 @@ import org.protelis.lang.datatype.impl.StringUID
 
 class MQTTNetMgrWithMQTTNeighborhoodMgr(
     deviceUID: StringUID,
-    serverAddress: String,
+    mqttClient: MqttClientBasicApi,
     applicationEUI: String,
     initialPosition: LatLongPosition
-) : MQTTNetworkManager(deviceUID, serverAddress, applicationEUI, emptySet()) {
+) : MQTTNetworkManager(deviceUID, mqttClient, applicationEUI, emptySet()) {
 
     private val publishOnTopic: String = "application/$applicationEUI/neighborhoodManager"
     private val subscribeOnTopic: String = "$baseTopic${deviceUID.uid}/neighborhood"

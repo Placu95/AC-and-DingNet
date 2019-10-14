@@ -8,6 +8,7 @@ import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.SensorType
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.DestinationNode
 import it.unibo.acdingnet.protelis.node.GenericNode
 import it.unibo.acdingnet.protelis.node.SensorNode
@@ -46,7 +47,7 @@ object ActorNodeFactory {
         localConf
     ) }
 
-    fun createDestinationNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
+    fun createDestinationNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttClient: MqttClientBasicApi, applicationUID: String,
                               destinationUID: StringUID, position: LatLongPosition) =
         createActorWithNode(
             DestinationNode(
@@ -54,12 +55,12 @@ object ActorNodeFactory {
                 sleepTime,
                 destinationUID,
                 applicationUID,
-                mqttAddress,
+                mqttClient,
                 position
             )
         )
 
-    fun createSensorNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
+    fun createSensorNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttClient: MqttClientBasicApi, applicationUID: String,
                          sensorDeviceUID: StringUID, position: LatLongPosition, sensorTypes: List<SensorType>) =
         createActorWithNode(
             SensorNode(
@@ -67,13 +68,13 @@ object ActorNodeFactory {
                 sleepTime,
                 sensorDeviceUID,
                 applicationUID,
-                mqttAddress,
+                mqttClient,
                 position,
                 sensorTypes
             )
         )
 
-    fun createUserNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttAddress: String, applicationUID: String,
+    fun createUserNode(protelisProgram: ProtelisProgram, sleepTime: Long, mqttClient: MqttClientBasicApi, applicationUID: String,
                        userUID: StringUID, position: LatLongPosition, sensorTypes: List<SensorType> = emptyList()) =
         createActorWithNode(
             UserNode(
@@ -81,7 +82,7 @@ object ActorNodeFactory {
                 sleepTime,
                 userUID,
                 applicationUID,
-                mqttAddress,
+                mqttClient,
                 position,
                 sensorTypes
             )

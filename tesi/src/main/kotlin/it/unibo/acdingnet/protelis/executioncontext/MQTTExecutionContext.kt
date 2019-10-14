@@ -3,7 +3,6 @@ package it.unibo.acdingnet.protelis.executioncontext
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
-import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionEnvironment
@@ -16,7 +15,7 @@ import kotlin.random.Random
 abstract class MQTTExecutionContext(
     private val _deviceUID: StringUID,
     val applicationUID: String,
-    val mqttAddress: String,
+    protected val mqttClient: MqttClientBasicApi,
     val netmgr: NetworkManager,
     val randomSeed: Int = 1,
     protected val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
@@ -29,9 +28,9 @@ abstract class MQTTExecutionContext(
     private val baseTopic: String = "application/$applicationUID/node/${_deviceUID.uid}/"
     private val receiveTopic: String = "${baseTopic}rx"
 
-    protected val mqttClient: MqttClientBasicApi = MqttClientPaho(mqttAddress, "").also {
-        it.connect()
-        it.subscribe(receiveTopic, this::handleDefaultTopic)
+    init {
+        mqttClient.connect()
+        mqttClient.subscribe(receiveTopic, this::handleDefaultTopic)
     }
 
     protected abstract fun handleDefaultTopic(topic: String, message: String)

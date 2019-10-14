@@ -1,6 +1,7 @@
 package it.unibo.acdingnet.protelis.node
 
 import it.unibo.acdingnet.protelis.model.LatLongPosition
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.networkmanager.MQTTNetMgrWithMQTTNeighborhoodMgr
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
@@ -13,7 +14,7 @@ abstract class GenericNode(
     val sleepTime: Long,
     val deviceUID: StringUID,
     val applicationUID: String,
-    val mqttAddress: String,
+    val mqttClient: MqttClientBasicApi,
     initialPosition: LatLongPosition
 ) {
 
@@ -22,7 +23,7 @@ abstract class GenericNode(
     }
 
     protected val networkManager =
-        MQTTNetMgrWithMQTTNeighborhoodMgr(deviceUID, mqttAddress, applicationUID, position)
+        MQTTNetMgrWithMQTTNeighborhoodMgr(deviceUID, mqttClient, applicationUID, position)
     protected val executionContext by lazy { createContext() }
     private val protelisVM by lazy { ProtelisVM(protelisProgram, executionContext) }
 

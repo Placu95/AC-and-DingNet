@@ -1,5 +1,6 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.GenericNode
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
@@ -13,12 +14,12 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment
 abstract class PositionedMQTTExecutionContext(
     private val device: GenericNode, //TODO improve information hiding
     applicationUID: String,
-    mqttAddress: String,
+    mqttClient: MqttClientBasicApi,
     netmgr: NetworkManager,
     randomSeed: Int = 1,
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
     ) :
-    MQTTExecutionContext(device.deviceUID, applicationUID, mqttAddress, netmgr, randomSeed, execEnvironment),
+    MQTTExecutionContext(device.deviceUID, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment),
     LocalizedDevice, SpatiallyEmbeddedDevice<Double> {
 
     override fun getCoordinates(): Tuple =  ArrayTupleImpl(device.position.latitude, device.position.longitude)

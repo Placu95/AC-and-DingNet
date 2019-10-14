@@ -3,6 +3,7 @@ package it.unibo.acdingnet.protelis.node
 import it.unibo.acdingnet.protelis.executioncontext.SensorExecutionContext
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.SensorType
+import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
 import org.protelis.vm.ProtelisProgram
@@ -14,15 +15,15 @@ open class SensorNode(
     sleepTime: Long,
     sensorDeviceUID: StringUID,
     applicationUID: String,
-    mqttAddress: String,
+    mqttClient: MqttClientBasicApi,
     position: LatLongPosition,
-    sensorTypes: List<SensorType>) : NodeWithSensor(protelisProgram, sleepTime, sensorDeviceUID, applicationUID, mqttAddress, position, sensorTypes) {
+    sensorTypes: List<SensorType>) : NodeWithSensor(protelisProgram, sleepTime, sensorDeviceUID, applicationUID, mqttClient, position, sensorTypes) {
 
     override fun createContext(): ExecutionContext =
         SensorExecutionContext(
             this,
             applicationUID,
-            mqttAddress,
+            mqttClient,
             networkManager
         )
 }
