@@ -8,7 +8,7 @@ import it.unibo.acdingnet.protelis.neighborhood.NewNeighborhoodMessage
 import it.unibo.acdingnet.protelis.neighborhood.Node
 import org.protelis.lang.datatype.impl.StringUID
 
-class MQTTNetMgrWithMQTTNeighborhoodMgr(
+open class MQTTNetMgrWithMQTTNeighborhoodMgr(
     deviceUID: StringUID,
     mqttClient: MqttClientBasicApi,
     applicationEUI: String,

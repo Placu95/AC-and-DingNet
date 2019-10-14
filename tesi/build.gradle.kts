@@ -12,6 +12,7 @@ dependencies {
     implementation("com.google.code.gson:gson:${extra["gsonVersion"].toString()}")
     implementation("com.typesafe.akka:akka-actor_2.12:${extra["akkaVersion"].toString()}")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:${extra["kotlinTestVersion"].toString()}")
+    testImplementation("io.mockk:mockk:1.9.1")
 }
 
 val test by tasks.getting(Test::class) {
