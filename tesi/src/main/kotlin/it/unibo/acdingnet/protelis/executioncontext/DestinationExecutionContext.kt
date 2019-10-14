@@ -26,7 +26,7 @@ class DestinationExecutionContext(
 
     private val randomGenerator = Random(randomSeed)
     private val _coordinates: Tuple by lazy {
-        ArrayTupleImpl(nodePosition.latitude, nodePosition.longitude)
+        ArrayTupleImpl(nodePosition.getLatitude(), nodePosition.getLongitude())
     }
 
     override fun nextRandomDouble(): Double = randomGenerator.nextDouble()

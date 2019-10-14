@@ -22,7 +22,7 @@ abstract class PositionedMQTTExecutionContext(
     MQTTExecutionContext(device.deviceUID, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment),
     LocalizedDevice, SpatiallyEmbeddedDevice<Double> {
 
-    override fun getCoordinates(): Tuple =  ArrayTupleImpl(device.position.latitude, device.position.longitude)
+    override fun getCoordinates(): Tuple =  ArrayTupleImpl(device.position.getLatitude(), device.position.getLongitude())
     override fun nbrVector(): Field<Tuple> = TODO("not implemented")
     override fun nbrRange(): Field<Double> = TODO("not implemented")
 }

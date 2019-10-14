@@ -1,21 +1,30 @@
 package it.unibo.acdingnet.protelis.model
 
-data class LatLongPosition(val latitude: Double, val longitude: Double) {
+import com.javadocmd.simplelatlng.LatLng
 
-    private val latR by lazy { Math.toRadians(latitude) }
-    private val longR by lazy { Math.toRadians(longitude) }
+/**
+ * LatLong position in meter
+ */
+data class LatLongPosition(private val latLong: LatLng) {
 
-    //TODO test
+    constructor(latitude: Double, longitude: Double): this(LatLng(latitude, longitude))
+
+    fun getLatitude() = latLong.latitude
+    fun getLongitude() = latLong.longitude
+
     fun distanceTo(position: LatLongPosition): Double {
-       val posLatR = Math.toRadians(position.latitude)
-       val posLongR = Math.toRadians(position.longitude)
+        val lat1R = Math.toRadians(getLatitude()) //TODO this can be lazy but is necessary modify conversion to json
+        val long1R = Math.toRadians(getLongitude()) //TODO this can be lazy but is necessary modify conversion to json
+        val lat2R = Math.toRadians(position.getLatitude())
+        val long2R = Math.toRadians(position.getLongitude())
 
-        val x = (posLongR - longR) * Math.cos((latR + posLatR) / 2)
-        val y = (posLatR - latR)
-        return Math.sqrt(x * x + y * y)
+        val x = (long2R - long1R) * Math.cos((lat1R + lat2R) / 2)
+        val y = (lat2R - lat1R)
+        return Math.sqrt(x * x + y * y) * EARTH_MEAN_RADIUS_METERS
     }
 
     companion object {
+        const val EARTH_MEAN_RADIUS_METERS: Double = 6371009.0
         fun zero() = LatLongPosition(0.0,0.0)
     }
 }
