@@ -64,9 +64,12 @@ class NeighborhoodManager(val applicationUID: String, private val mqttClient: Mq
         val nodeNeighborhood = neighborhood[node]
         neighborhood -= node
         //send update to all modified node
-        nodeNeighborhood!!.forEach{
-            neighborhood[it]!! -= node
-            sendUpdateNeighborhood(it, neighborhood[it]!!)
+        nodeNeighborhood?.forEach{
+            val tmp = it
+            neighborhood[it]?.let {
+                it -= node
+                sendUpdateNeighborhood(tmp, it)
+            }
         }
     }
 
@@ -75,13 +78,13 @@ class NeighborhoodManager(val applicationUID: String, private val mqttClient: Mq
         val neighborsAdded = newNeighborhood.filter { !neighborhood[node]!!.contains(it) }.also {
             it.forEach{ neighborhood[it]!! += node }
         }
-        val neighborsRemoved = neighborhood[node]!!.filter { !newNeighborhood.contains(it) }.also {
-            it.forEach{ neighborhood[it]!! -= node }
+        val neighborsRemoved = neighborhood[node]?.filter { !newNeighborhood.contains(it) }.also {
+            it?.forEach{ neighborhood[it]!! -= node }
         }
         neighborhood[node] = newNeighborhood
         sendUpdateNeighborhood(node, newNeighborhood)
         neighborsAdded.forEach { sendUpdateNeighborhood(it, neighborhood[it]!!) }
-        neighborsRemoved.forEach { sendUpdateNeighborhood(it, neighborhood[it]!!) }
+        neighborsRemoved?.forEach { sendUpdateNeighborhood(it, neighborhood[it]!!) }
     }
 
     //TODO test
