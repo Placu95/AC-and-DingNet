@@ -55,4 +55,6 @@ open class MQTTNetworkManager(
         neighbors.filter { !this.neighbors.contains(it) }.forEach{subscribeToMqtt(it)}
         this.neighbors = neighbors
     }
+
+    protected fun getNeighbors() = neighbors
 }
