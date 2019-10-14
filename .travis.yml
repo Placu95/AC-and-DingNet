@@ -24,7 +24,8 @@ before_install:
   - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
   - source .install-jdk-travis.sh
 script:
-  - ./tesi/gradlew clean test
+  - cd tesi
+  - ./gradlew clean test
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh
