@@ -20,5 +20,8 @@ class MqttClientPaho(mqttAddress: String, clientId: String) : MqttClientBasicApi
     override fun subscribe(topicFilter: String, messageListener: (topic: String, message: String) -> Unit) =
         mqttClient.subscribe(topicFilter) {topic, message -> messageListener(topic, "$message") }
 
+    override fun subscribeToByteArray(topicFilter: String, messageListener: (topic: String, message: ByteArray) -> Unit) =
+        mqttClient.subscribe(topicFilter) {topic, message -> messageListener(topic, message.payload) }
+
     override fun unsubscribe(topicFilter: String) = mqttClient.unsubscribe(topicFilter)
 }

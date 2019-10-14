@@ -3,15 +3,16 @@ package it.unibo.acdingnet.protelis.mqtt
 class MqttClientMock: MqttClientBasicApi {
 
     private val subscribed: MutableMap<String, MutableList<(String, String) -> Unit>> = mutableMapOf()
+    private val subscribedToByteArray: MutableMap<String, MutableList<(String, ByteArray) -> Unit>> = mutableMapOf()
 
     override fun connect() { MqttBrokerMock.connect(this) }
 
     override fun disconnect() { MqttBrokerMock.disconnect(this) }
 
-    override fun publish(topic: String, message: String) { MqttBrokerMock.publish(topic, message) }
+    override fun publish(topic: String, message: String) { publish(topic, message.toByteArray(Charsets.US_ASCII)) }
 
     override fun publish(topic: String, message: ByteArray) {
-        publish(topic, String(message))
+        MqttBrokerMock.publish(topic, message)
     }
 
     override fun subscribe(topicFilter: String, messageListener: (topic: String, message: String) -> Unit) {
@@ -22,13 +23,22 @@ class MqttClientMock: MqttClientBasicApi {
         subscribed[topicFilter]!! += messageListener
     }
 
+    override fun subscribeToByteArray(topicFilter: String, messageListener: (topic: String, message: ByteArray) -> Unit) {
+        if (!subscribedToByteArray.containsKey(topicFilter)) {
+            subscribedToByteArray += topicFilter to mutableListOf()
+            MqttBrokerMock.subscribe(this, topicFilter)
+        }
+        subscribedToByteArray[topicFilter]!! += messageListener
+    }
+
     override fun unsubscribe(topicFilter: String) {
         subscribed -= topicFilter
         MqttBrokerMock.unsubscribe(this, topicFilter)
     }
 
-    fun dispatch(topic: String, message: String) {
-        subscribed[topic]?.let { it.forEach { it(topic, message) } }
+    fun dispatch(topic: String, message: ByteArray) {
+        subscribedToByteArray[topic]?.let { it.forEach { it(topic, message) } }
+        subscribed[topic]?.let { it.forEach { it(topic, String(message)) } }
     }
 }
 
@@ -44,12 +54,8 @@ object MqttBrokerMock {
         clientSubscribed -= instance
     }
 
-    fun publish(topic: String, message: String) {
-        clientSubscribed.filter { it.value.contains(topic) }.forEach{ it.key.dispatch(topic, message)}
-    }
-
     fun publish(topic: String, message: ByteArray) {
-        publish(topic, String(message))
+        clientSubscribed.filter { it.value.contains(topic) }.forEach{ it.key.dispatch(topic, message)}
     }
 
     fun subscribe(instance: MqttClientMock, topicFilter: String) {
@@ -62,5 +68,4 @@ object MqttBrokerMock {
     fun unsubscribe(instance: MqttClientMock, topicFilter: String) {
         clientSubscribed[instance]?.let{it -= topicFilter}
     }
-
 }

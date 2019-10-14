@@ -13,6 +13,7 @@ dependencies {
     implementation("com.javadocmd:simplelatlng:1.3.1")
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:${extra["paho_version"].toString()}")
     implementation("com.google.code.gson:gson:${extra["gsonVersion"].toString()}")
+    implementation("org.apache.commons:commons-lang3:3.7")
     implementation("com.typesafe.akka:akka-actor_2.12:${extra["akkaVersion"].toString()}")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:${extra["kotlinTestVersion"].toString()}")
     testImplementation("io.mockk:mockk:1.9.1")
