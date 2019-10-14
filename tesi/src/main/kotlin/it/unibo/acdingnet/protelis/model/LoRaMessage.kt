@@ -26,7 +26,7 @@ data class EmptyLoRaHeader(override val header: String): LoRaHeader
 
 data class LoRaSensorPayloadImpl(
     override val time: Int,
-    override val sensorsData: List<SensorData>,
+    override val sensorsData: List<SensorData>,//todo it will be only data without type
     override val position: LatLongPosition? = null
     ) : LoRaSensorPayload {
 

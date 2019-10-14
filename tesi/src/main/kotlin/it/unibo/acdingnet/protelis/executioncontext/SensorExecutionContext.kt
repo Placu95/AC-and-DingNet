@@ -7,7 +7,7 @@ import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
 
-class SensorExecutionContext(
+ open class SensorExecutionContext(
     private val sensorNode: SensorNode,
     applicationUID: String,
     mqttClient: MqttClientBasicApi,
