@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
     kotlin("jvm") version "1.3.41"
@@ -6,6 +8,7 @@ plugins {
 repositories { mavenCentral() }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
     implementation("org.protelis:protelis:${extra["protelisVersion"].toString()}")
     implementation("com.javadocmd:simplelatlng:1.3.1")
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:${extra["paho_version"].toString()}")
@@ -17,4 +20,12 @@ dependencies {
 
 val test by tasks.getting(Test::class) {
     useJUnitPlatform { }
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }
