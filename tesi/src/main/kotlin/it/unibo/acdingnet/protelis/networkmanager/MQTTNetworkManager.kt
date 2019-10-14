@@ -4,12 +4,14 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.mqtt.MqttClientPaho
+import org.apache.commons.lang3.SerializationUtils
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.CodePath
 import org.protelis.vm.NetworkManager
+import java.io.Serializable
 
-data class MessageState(val payload: Map<CodePath, Any>)
+data class MessageState(val payload: Map<CodePath, Any>): Serializable
 
 open class MQTTNetworkManager(
     val deviceUID: StringUID,
@@ -28,15 +30,14 @@ open class MQTTNetworkManager(
 
     init {
         mqttClient.connect()
-        //TODO test it
         neighbors.forEach{subscribeToMqtt(it)}
     }
 
     private fun getMqttStateTopicByDevice(deviceUID: StringUID): String = "$baseTopic${deviceUID.uid}/state"
 
     protected fun subscribeToMqtt(deviceUID: StringUID) {
-        mqttClient.subscribe(getMqttStateTopicByDevice(deviceUID)) { _, message ->
-            val msg = gson.fromJson(message, MessageState::class.java).payload
+        mqttClient.subscribeToByteArray(getMqttStateTopicByDevice(deviceUID)) { _, message ->
+            val msg = SerializationUtils.deserialize<MessageState>(message).payload
             messages += deviceUID to msg
         }
     }
@@ -44,7 +45,7 @@ open class MQTTNetworkManager(
     override fun shareState(toSend: Map<CodePath, Any>): Unit =
         mqttClient.publish(getMqttStateTopicByDevice(deviceUID), toMqttMessage(MessageState(toSend)))
 
-    private fun toMqttMessage(message: MessageState): String = gson.toJson(message)
+    private fun toMqttMessage(message: MessageState): ByteArray = SerializationUtils.serialize(message)
 
     override fun getNeighborState(): Map<DeviceUID, Map<CodePath, Any>> = messages.apply { messages = emptyMap() }
 
