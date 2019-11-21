@@ -60,7 +60,10 @@ class SensorExecutionContextTest : StringSpec() {
 
             //generate message
             val header = FrameHeader(emptyList(), 0,0, emptyList())
-            val data: List<Byte> = sensorData.values.flatten().toList()
+            val data: List<Byte> = sensorData.values
+                .flatten()
+                .toMutableList()
+                .also { it.add(0, MessageType.SENSOR_VALUE.code)}
             val packet = LoRaWanPacket(1001L, 1L, false, 0.8, 15, data, emptyList(), header)
             val transmission = LoRaTransmission(1001L, 2L, 0.5, 60, 790, packet, "DATA_RATE1", LocalTime.MIN, 385.4,
                 arrived = true,
