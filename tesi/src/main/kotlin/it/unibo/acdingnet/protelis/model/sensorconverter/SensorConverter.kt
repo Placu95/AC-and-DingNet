@@ -23,6 +23,6 @@ class DefaultConverter: SensorConverter {
     }
 }
 
-class UnssupportedConversion: SensorConverter {
+class UnsupportedConversion: SensorConverter {
     override fun convert(length: Int, data: MutableList<Byte>): Double = throw UnsupportedOperationException()
 }
