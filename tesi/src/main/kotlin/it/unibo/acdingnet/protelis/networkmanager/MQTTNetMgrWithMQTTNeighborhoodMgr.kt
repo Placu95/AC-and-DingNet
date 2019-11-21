@@ -19,29 +19,22 @@ open class MQTTNetMgrWithMQTTNeighborhoodMgr(
     private val subscribeOnTopic: String = "$baseTopic${deviceUID.uid}/neighborhood"
 
     init {
-        mqttClient.subscribe(subscribeOnTopic) {
-            _, message ->  setNeighbors(gson.fromJson(message, NewNeighborhoodMessage::class.java)
-                .neighborhood.map { it.uid }.toSet())
+        mqttClient.subscribe(subscribeOnTopic, NewNeighborhoodMessage::class.java) {
+            _, message ->  setNeighbors(message.neighborhood.map { it.uid }.toSet())
         }
 
-        mqttClient.publish(
-            publishOnTopic,
-            generateMessage(MessageType.ADD, deviceUID, initialPosition)
-        )
+        mqttClient.publish(publishOnTopic, generateMessage(MessageType.ADD, deviceUID, initialPosition))
     }
 
-    fun changePosition(position: LatLongPosition) {
+    fun changePosition(position: LatLongPosition) =
         mqttClient.publish(publishOnTopic, generateMessage(MessageType.UPDATE, deviceUID, position))
-    }
 
-    fun nodeDeleated() {
-        mqttClient.publish(publishOnTopic, generateMessage(MessageType.LEAVE, deviceUID, LatLongPosition.zero()))
-    }
+
+    fun nodeDeleted() = mqttClient.publish(publishOnTopic, generateMessage(MessageType.LEAVE, deviceUID, LatLongPosition.zero()))
 
     private fun generateMessage(type: MessageType, uid: StringUID, position: LatLongPosition) =
         generateMessage(type, Node(uid, position))
 
-    private fun generateMessage(type: MessageType, node: Node) =
-        gson.toJson(NeighborhoodMessage(type, node)).toByteArray(Charsets.US_ASCII)
+    private fun generateMessage(type: MessageType, node: Node) = NeighborhoodMessage(type, node)
 
 }

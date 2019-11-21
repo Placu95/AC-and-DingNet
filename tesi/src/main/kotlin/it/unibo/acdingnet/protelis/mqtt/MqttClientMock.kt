@@ -2,33 +2,22 @@ package it.unibo.acdingnet.protelis.mqtt
 
 class MqttClientMock: MqttClientBasicApi {
 
-    private val subscribed: MutableMap<String, MutableList<(String, String) -> Unit>> = mutableMapOf()
-    private val subscribedToByteArray: MutableMap<String, MutableList<(String, ByteArray) -> Unit>> = mutableMapOf()
+    private val subscribed: MutableMap<String, MutableList<MqttMessageConsumer<*>>> = mutableMapOf()
 
     override fun connect() { MqttBrokerMock.connect(this) }
 
     override fun disconnect() { MqttBrokerMock.disconnect(this) }
 
-    override fun publish(topic: String, message: String) { publish(topic, message.toByteArray(Charsets.US_ASCII)) }
-
-    override fun publish(topic: String, message: ByteArray) {
+    override fun publish(topic: String, message: MqttMessageType) {
         MqttBrokerMock.publish(topic, message)
     }
 
-    override fun subscribe(topicFilter: String, messageListener: (topic: String, message: String) -> Unit) {
+    override fun<T : MqttMessageType> subscribe(topicFilter: String, clazz: Class<T>, messageListener: (topic: String, message: T) -> Unit) {
         if (!subscribed.containsKey(topicFilter)) {
             subscribed += topicFilter to mutableListOf()
             MqttBrokerMock.subscribe(this, topicFilter)
         }
-        subscribed[topicFilter]!! += messageListener
-    }
-
-    override fun subscribeToByteArray(topicFilter: String, messageListener: (topic: String, message: ByteArray) -> Unit) {
-        if (!subscribedToByteArray.containsKey(topicFilter)) {
-            subscribedToByteArray += topicFilter to mutableListOf()
-            MqttBrokerMock.subscribe(this, topicFilter)
-        }
-        subscribedToByteArray[topicFilter]!! += messageListener
+        subscribed[topicFilter]!! += MqttMessageConsumer(clazz, messageListener)
     }
 
     override fun unsubscribe(topicFilter: String) {
@@ -36,9 +25,12 @@ class MqttClientMock: MqttClientBasicApi {
         MqttBrokerMock.unsubscribe(this, topicFilter)
     }
 
-    fun dispatch(topic: String, message: ByteArray) {
-        subscribedToByteArray[topic]?.let { it.forEach { it(topic, message) } }
-        subscribed[topic]?.let { it.forEach { it(topic, String(message)) } }
+    fun dispatch(topic: String, message: MqttMessageType) {
+        subscribed[topic]?.let { it.forEach { it.accept(topic, message) } }
+    }
+
+    private data class MqttMessageConsumer<T: MqttMessageType> (val clazz: Class<T>, val consumer: (String, T) -> Unit) {
+        fun accept(topic: String, message: MqttMessageType): Unit = consumer.invoke(topic, clazz.cast(message))
     }
 }
 
@@ -54,7 +46,7 @@ object MqttBrokerMock {
         clientSubscribed -= instance
     }
 
-    fun publish(topic: String, message: ByteArray) {
+    fun publish(topic: String, message: MqttMessageType) {
         clientSubscribed.filter { it.value.contains(topic) }.forEach{ it.key.dispatch(topic, message)}
     }
 

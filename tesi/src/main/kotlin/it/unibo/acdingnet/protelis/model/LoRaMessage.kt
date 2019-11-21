@@ -1,5 +1,7 @@
 package it.unibo.acdingnet.protelis.model
 
+import it.unibo.acdingnet.protelis.mqtt.MqttMessageType
+
 interface LoRaHeader {
     val header: String
 }
@@ -34,7 +36,7 @@ data class LoRaSensorPayloadImpl(
     override fun payloadToString(): String = "$sensorsData"
 }
 
-sealed class LoRaMessage<H: LoRaHeader, P : LoRaPayload>(header: LoRaHeader, payload: P)
+sealed class LoRaMessage<H: LoRaHeader, P : LoRaPayload>(header: LoRaHeader, payload: P): MqttMessageType
 
 data class LoRaSensorMessage(val header: String = "", val payload: LoRaSensorPayloadImpl):
     LoRaMessage<EmptyLoRaHeader, LoRaSensorPayloadImpl>(

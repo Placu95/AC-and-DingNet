@@ -82,7 +82,7 @@ class NeighborhoodIntegrationTest : StringSpec() {
             val net1 = MQTTNetMgrWithMQTTNeighborhoodMgrSpy(uid1, MqttClientMock(), applicationID, position1)
             val net2 = MQTTNetMgrWithMQTTNeighborhoodMgrSpy(uid2, MqttClientMock(), applicationID, neighborToPosition1)
             should { net1.getNodeNeighbors().map { it.uid }.contains(uid2.uid) }
-            net2.nodeDeleated()
+            net2.nodeDeleted()
 
             neighborhoodManager.neighborhood.keys.size shouldBe 1
             neighborhoodManager.neighborhood.filter { it.key.uid.uid == uid1.uid && it.value.isEmpty() }.count() shouldBe 1

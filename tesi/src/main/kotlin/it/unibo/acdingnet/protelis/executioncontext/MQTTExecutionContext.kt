@@ -2,6 +2,8 @@ package it.unibo.acdingnet.protelis.executioncontext
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import it.unibo.acdingnet.protelis.model.LoRaTransmission
+import it.unibo.acdingnet.protelis.mqtt.LoRaTransmissionWrapper
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.impl.StringUID
@@ -30,10 +32,10 @@ abstract class MQTTExecutionContext(
 
     init {
         mqttClient.connect()
-        mqttClient.subscribe(receiveTopic, this::handleDefaultTopic)
+        mqttClient.subscribe(receiveTopic, LoRaTransmissionWrapper::class.java) {t, m -> handleDefaultTopic(t, m.transmission)}
     }
 
-    protected abstract fun handleDefaultTopic(topic: String, message: String)
+    protected abstract fun handleDefaultTopic(topic: String, message: LoRaTransmission)
     //endregion
 
     override fun nextRandomDouble(): Double = randomGenerator.nextDouble()

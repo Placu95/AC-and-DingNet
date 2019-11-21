@@ -4,14 +4,15 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
+import it.unibo.acdingnet.protelis.mqtt.MqttMessageType
 import org.protelis.lang.datatype.impl.StringUID
 
-data class NeighborhoodMessage(val type: MessageType, val node: Node) {
+data class NeighborhoodMessage(val type: MessageType, val node: Node): MqttMessageType {
 
     enum class MessageType {ADD, UPDATE, LEAVE}
 }
 
-data class NewNeighborhoodMessage(val neighborhood: Set<Node>)
+data class NewNeighborhoodMessage(val neighborhood: Set<Node>): MqttMessageType
 
 data class Node(val uid: StringUID, var position: LatLongPosition) {
 
@@ -38,8 +39,8 @@ class NeighborhoodManager(val applicationUID: String, private val mqttClient: Mq
 
     init {
         mqttClient.connect()
-        mqttClient.subscribe(subscribedTopic) {_, message ->
-                val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
+        mqttClient.subscribe(subscribedTopic, NeighborhoodMessage::class.java) {_, msg ->
+                //val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
                 when(msg.type) {
                     NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
                     NeighborhoodMessage.MessageType.LEAVE -> removeNode(msg.node)
@@ -89,9 +90,7 @@ class NeighborhoodManager(val applicationUID: String, private val mqttClient: Mq
 
     //TODO test
     private fun sendUpdateNeighborhood(node: Node, neighborhood: Set<Node>) {
-        mqttClient.publish(
-            getNodeTopic(node),
-            gson.toJson(NewNeighborhoodMessage(neighborhood)).toByteArray(Charsets.US_ASCII))
+        mqttClient.publish(getNodeTopic(node), NewNeighborhoodMessage(neighborhood))
     }
 
     private fun getNodeTopic(node: Node) = "application/$applicationUID/node/${node.uid}/neighborhood"

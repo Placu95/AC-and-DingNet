@@ -6,13 +6,9 @@ interface MqttClientBasicApi {
 
     fun disconnect()
 
-    fun publish(topic: String, message: String)
+    fun publish(topic: String, message: MqttMessageType)
 
-    fun publish(topic: String, message: ByteArray)
-
-    fun subscribe(topicFilter: String, messageListener: (topic: String, message: String) -> Unit)
-
-    fun subscribeToByteArray(topicFilter: String, messageListener: (topic: String, message: ByteArray) -> Unit)
+    fun <T : MqttMessageType> subscribe(topicFilter: String, clazz: Class<T>, messageListener: (topic: String, message: T) -> Unit)
 
     fun unsubscribe(topicFilter: String)
 }
