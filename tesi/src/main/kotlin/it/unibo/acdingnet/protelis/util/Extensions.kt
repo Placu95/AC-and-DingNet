@@ -1,4 +1,4 @@
-package it.unibo.acdingnet.protelis
+package it.unibo.acdingnet.protelis.util
 
 val Float.Companion.SIZE_BYTES: Int get() = 4
 

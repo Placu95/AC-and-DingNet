@@ -1,6 +1,6 @@
 package it.unibo.acdingnet.protelis.model.sensorconverter
 
-import it.unibo.acdingnet.protelis.SIZE_BYTES
+import it.unibo.acdingnet.protelis.util.SIZE_BYTES
 import java.nio.ByteBuffer
 
 

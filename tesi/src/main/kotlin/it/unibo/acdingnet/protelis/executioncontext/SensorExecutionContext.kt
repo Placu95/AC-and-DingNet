@@ -6,6 +6,7 @@ import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.model.SensorType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.SensorNode
+import it.unibo.acdingnet.protelis.util.SIZE_BYTES
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
@@ -48,6 +49,6 @@ open class SensorExecutionContext(
         val pair = payload.partition { count++ < SensorType.GPS.lenght }
         payload.removeAll(pair.first)
         val buffer = ByteBuffer.wrap(pair.first.toByteArray())
-        return LatLongPosition(buffer.float.toDouble(), buffer.getFloat(4).toDouble())//4 is number of bytes used for float type
+        return LatLongPosition(buffer.float.toDouble(), buffer.getFloat(Float.SIZE_BYTES).toDouble())
     }
 }
