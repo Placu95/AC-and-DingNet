@@ -24,5 +24,5 @@ abstract class PositionedMQTTExecutionContext(
 
     override fun getCoordinates(): Tuple =  ArrayTupleImpl(device.position.getLatitude(), device.position.getLongitude())
     override fun nbrVector(): Field<Tuple> = TODO("not implemented")
-    override fun nbrRange(): Field<Double> = TODO("not implemented")
+    override fun nbrRange(): Field<Double> = buildField({ it.distanceTo(device.position) }, device.position)
 }
