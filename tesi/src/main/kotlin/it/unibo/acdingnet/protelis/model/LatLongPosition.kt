@@ -1,6 +1,7 @@
 package it.unibo.acdingnet.protelis.model
 
 import com.javadocmd.simplelatlng.LatLng
+import java.nio.ByteBuffer
 
 /**
  * LatLong position in meter
@@ -21,6 +22,13 @@ data class LatLongPosition(private val latLong: LatLng) {
         val x = (long2R - long1R) * Math.cos((lat1R + lat2R) / 2)
         val y = (lat2R - lat1R)
         return Math.sqrt(x * x + y * y) * EARTH_MEAN_RADIUS_METERS
+    }
+
+    fun toBytes(): List<Byte> {
+        val data = ByteArray(8)
+        ByteBuffer.wrap(data, 0,4).putFloat(getLatitude().toFloat())
+        ByteBuffer.wrap(data, 4,4).putFloat(getLongitude().toFloat())
+        return data.toList()
     }
 
     companion object {
