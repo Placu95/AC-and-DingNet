@@ -2,8 +2,8 @@ package it.unibo.acdingnet.protelis.executioncontext
 
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.LoRaTransmission
+import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
-import it.unibo.acdingnet.protelis.mqtt.MqttMessageType
 import it.unibo.acdingnet.protelis.node.UserNode
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
@@ -16,9 +16,9 @@ class UserExecutionContext(
     netmgr: NetworkManager,
     randomSeed: Int = 1,
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
-    ): PositionedMQTTExecutionContext(userNode, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
+    ): SensorExecutionContext(userNode, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
 
-    private val destinatioPosition: LatLongPosition? = null
+    private var destinationPosition: LatLongPosition? = null
 
     override fun instance(): UserExecutionContext =
         UserExecutionContext(
@@ -30,20 +30,23 @@ class UserExecutionContext(
             execEnvironment
         )
 
+    override fun handleDeviceTransmission(topic: String, message: LoRaTransmission) {
+        val payload = message.content.payload
+        if (payload.isNotEmpty()) {
+            when (payload[0]) {
+                MessageType.SENSOR_VALUE.code -> super.handleDeviceTransmission(topic, message)
+                MessageType.REQUEST_PATH.code -> handleRequestPath(payload.toMutableList().also{ it.removeAt(0) })
+                else -> throw IllegalArgumentException("message type not supported")
+            }
+        }
+    }
+
     //TODO
-    override fun handleDefaultTopic(topic: String, message: LoRaTransmission) {
-        println(message)
-        mqttClient.publish(topic.replace("rx", "tx"), Test(listOf(-1)))
-        /*
-        val msg = gson.fromJson(message, LoRaUserMessage::class.java)
-        msg.payload.sensorsData.forEach{ execEnvironment.put(it.sensorType.type, it.sensorValue) }
+    private fun handleRequestPath(mutPayload: MutableList<Byte>) {
         //TODO put environment variable to start the path
         //update position
-        userNode.position = msg.payload.position
+        userNode.position = consumeGPSData(mutPayload)
         //TODO create destination node
-
-         */
+        destinationPosition = consumeGPSData(mutPayload)
     }
 }
-
-data class Test(val data: List<Byte>, val macCommands: List<String> = emptyList()): MqttMessageType
