@@ -44,5 +44,5 @@ class DestinationExecutionContext(
 
     override fun getCoordinates(): Tuple = _coordinates
     override fun nbrVector(): Field<Tuple> = TODO("not implemented")
-    override fun nbrRange(): Field<Double> = TODO("not implemented")
+    override fun nbrRange(): Field<Double> = buildField({ it.distanceTo(nodePosition) }, nodePosition)
 }
