@@ -33,7 +33,6 @@ open class SensorExecutionContext(
     override fun handleDeviceTransmission(topic: String, message: LoRaTransmission) {
         val payload = message.content.payload.toMutableList()
         if (payload.isNotEmpty() && payload[0] == MessageType.SENSOR_VALUE.code) {
-            println(payload)
             payload.removeAt(0)
             sensorNode.sensorTypes.forEach {
                 when (it) {
@@ -41,7 +40,6 @@ open class SensorExecutionContext(
                     else -> execEnvironment.put(it.type, it.convertToDouble(payload))
                 }
             }
-            println(payload)
         }
     }
 

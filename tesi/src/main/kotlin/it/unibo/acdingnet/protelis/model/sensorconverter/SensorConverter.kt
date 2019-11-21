@@ -1,12 +1,16 @@
 package it.unibo.acdingnet.protelis.model.sensorconverter
 
+import it.unibo.acdingnet.protelis.SIZE_BYTES
 import java.nio.ByteBuffer
+
+
 
 interface SensorConverter {
     fun convert(length: Int, data: MutableList<Byte>): Double
 }
 
 class DefaultConverter: SensorConverter {
+
     override fun convert(length: Int, data: MutableList<Byte>): Double {
         var count = 0
         val pair = data.partition { count++ <length }
@@ -15,8 +19,8 @@ class DefaultConverter: SensorConverter {
         return when(length) {
             Byte.SIZE_BYTES -> buffer.get().toDouble()
             Short.SIZE_BYTES -> buffer.short.toDouble()
-            4 -> buffer.float.toDouble()
-            8 -> buffer.double
+            Float.SIZE_BYTES -> buffer.float.toDouble()
+            Double.SIZE_BYTES -> buffer.double
             else -> throw IllegalStateException("impossible convert. Sensor with unknown length")
         }
 
