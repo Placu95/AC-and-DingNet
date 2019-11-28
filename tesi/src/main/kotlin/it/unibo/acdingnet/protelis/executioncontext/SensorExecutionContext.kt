@@ -38,7 +38,7 @@ open class SensorExecutionContext(
             sensorNode.sensorTypes.forEach {
                 when (it) {
                     SensorType.GPS -> sensorNode.position = consumeGPSData(payload)
-                    else -> execEnvironment.put(it.type, it.convertToDouble(payload))
+                    else -> execEnvironment.put("$it", it.convertToDouble(payload))
                 }
             }
         }

@@ -4,10 +4,10 @@ import it.unibo.acdingnet.protelis.model.sensorconverter.DefaultConverter
 import it.unibo.acdingnet.protelis.model.sensorconverter.SensorConverter
 import it.unibo.acdingnet.protelis.model.sensorconverter.UnsupportedConversion
 
-enum class SensorType(val type: String, val lenght: Int, private val converter: SensorConverter = DefaultConverter()) {
-    SOOT("soot", 1),
-    CO2("CO2", 1),
-    GPS("gps", 8, UnsupportedConversion());
+enum class SensorType(val lenght: Int = 1, private val converter: SensorConverter = DefaultConverter()) {
+    GPS(8, UnsupportedConversion()),
+    PM10,
+    NO2(2);
 
     fun convertToDouble(data: MutableList<Byte>): Double = converter.convert(lenght, data)
 

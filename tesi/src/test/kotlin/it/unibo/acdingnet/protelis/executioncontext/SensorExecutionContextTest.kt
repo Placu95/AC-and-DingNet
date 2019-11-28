@@ -4,6 +4,7 @@ import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import it.unibo.acdingnet.protelis.model.*
+import it.unibo.acdingnet.protelis.model.sensorconverter.DefaultConverter
 import it.unibo.acdingnet.protelis.mqtt.LoRaTransmissionWrapper
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.mqtt.MqttClientMock
@@ -37,12 +38,11 @@ class SensorExecutionContextTest : StringSpec() {
     init {
 
         "when arrive a message from mqtt the execution context should update the node information" {
-
             val newPos = LatLongPosition(1.0, 1.0)
             val sensorData: Map<SensorType, List<Byte>> = mapOf(
-                SensorType.SOOT to listOf<Byte>(50),
+                SensorType.PM10 to listOf<Byte>(50),
                 SensorType.GPS to newPos.toBytes(),
-                SensorType.CO2 to listOf<Byte>(89))
+                SensorType.NO2 to listOf<Byte>(1, 1))
 
             val sensors = sensorData.keys.toList()
             val node = SensorNodeSpy(
@@ -55,7 +55,7 @@ class SensorExecutionContextTest : StringSpec() {
                 sensors
             )
 
-            should { sensors.none { node.spyExecContext().executionEnvironment.has(it.type) }}
+            should { sensors.none { node.spyExecContext().executionEnvironment.has("$it") }}
             node.position shouldBe LatLongPosition.zero()
 
             //generate message
@@ -77,7 +77,7 @@ class SensorExecutionContextTest : StringSpec() {
                 sensors
                     .filter { it != SensorType.GPS }
                     .all {
-                        execEnv.get(it.type) as Double == sensorData[it]?.get(0)?.toDouble()
+                        execEnv.get("$it") as Double == sensorData[it]?.let {array ->  DefaultConverter().convert(array.size, array.toMutableList())}
                 }
             }
             node.position shouldBe newPos
