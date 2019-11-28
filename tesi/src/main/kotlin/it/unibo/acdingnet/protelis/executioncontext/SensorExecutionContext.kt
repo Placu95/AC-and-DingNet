@@ -21,6 +21,8 @@ open class SensorExecutionContext(
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
     ): PositionedMQTTExecutionContext(sensorNode, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
 
+    private var sensorsValue: Map<SensorType, Double> = emptyMap()
+
     override fun instance(): SensorExecutionContext =
         SensorExecutionContext(
             sensorNode,
@@ -38,9 +40,13 @@ open class SensorExecutionContext(
             sensorNode.sensorTypes.forEach {
                 when (it) {
                     SensorType.GPS -> sensorNode.position = consumeGPSData(payload)
-                    else -> execEnvironment.put("$it", it.convertToDouble(payload))
+                    else -> sensorsValue = sensorsValue.plus(Pair(it, it.convertToDouble(payload)))
                 }
             }
+            sensorsValue
+                .map { sensor -> IAQCalculator.computeIaqLevel(sensor.key, sensor.value) }
+                .max()
+                ?.let { value -> execEnvironment.put("iaqLevel", value) }
         }
     }
 
@@ -50,5 +56,27 @@ open class SensorExecutionContext(
         payload.removeAll(pair.first)
         val buffer = ByteBuffer.wrap(pair.first.toByteArray())
         return LatLongPosition(buffer.float.toDouble(), buffer.getFloat(Float.SIZE_BYTES).toDouble())
+    }
+}
+
+object IAQCalculator {
+
+    private val iaqLevel: List<Pair<Int, Int>> = listOf(
+        Pair(0, 25), Pair(25, 50), Pair(50, 75), Pair(75, 100), Pair(100, 125)
+    )
+    private val sensorsLevel: Map<SensorType, List<Pair<Int, Int>>> = mapOf(
+        Pair(SensorType.PM10, listOf(Pair(0, 25), Pair(25, 50), Pair(50, 90), Pair(90, 180), Pair(180, 255))),
+        Pair(SensorType.NO2, listOf(Pair(0, 50), Pair(50, 100), Pair(100, 200), Pair(200, 400), Pair(400, 600)))
+    )
+
+    fun computeIaqLevel(sensorType: SensorType, value: Double): Double {
+        return sensorsLevel[sensorType]
+            ?.mapIndexed { i, v -> Pair(i,v) }
+            ?.find { it.second.first <= value && value < it.second.second }
+            ?.let {
+                val c = it.second
+                val iaq = iaqLevel[it.first]
+                1.0 * (iaq.second - iaq.first) / (c.second - c.first) * (value - c.first) + iaq.first
+            } !!.toDouble()
     }
 }
