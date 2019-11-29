@@ -6,6 +6,7 @@ import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.model.SensorType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.SensorNode
+import it.unibo.acdingnet.protelis.util.Const
 import it.unibo.acdingnet.protelis.util.SIZE_BYTES
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
@@ -46,7 +47,7 @@ open class SensorExecutionContext(
             sensorsValue
                 .map { sensor -> IAQCalculator.computeIaqLevel(sensor.key, sensor.value) }
                 .max()
-                ?.let { value -> execEnvironment.put("iaqLevel", value) }
+                ?.let { value -> execEnvironment.put(Const.IAQLEVEL_KEY, value) }
         }
     }
 
