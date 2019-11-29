@@ -4,7 +4,9 @@ import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.LoRaTransmission
 import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
+import it.unibo.acdingnet.protelis.node.DestinationNode
 import it.unibo.acdingnet.protelis.node.UserNode
+import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
@@ -47,6 +49,8 @@ class UserExecutionContext(
         //update position
         userNode.position = consumeGPSData(mutPayload)
         //TODO create destination node
-        destinationPosition = consumeGPSData(mutPayload)
+        destinationPosition = consumeGPSData(mutPayload).also {
+            DestinationNode(userNode.protelisProgram, userNode.sleepTime, StringUID(""), applicationUID, mqttClient, it)
+        }
     }
 }
