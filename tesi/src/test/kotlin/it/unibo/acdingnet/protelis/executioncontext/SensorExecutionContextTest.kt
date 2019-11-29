@@ -4,11 +4,11 @@ import io.kotlintest.should
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import it.unibo.acdingnet.protelis.model.*
-import it.unibo.acdingnet.protelis.model.sensorconverter.DefaultConverter
 import it.unibo.acdingnet.protelis.mqtt.LoRaTransmissionWrapper
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.mqtt.MqttClientMock
 import it.unibo.acdingnet.protelis.node.SensorNode
+import it.unibo.acdingnet.protelis.util.Const
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionContext
 import org.protelis.vm.ProtelisProgram
@@ -72,14 +72,7 @@ class SensorExecutionContextTest : StringSpec() {
             //send message
             MqttClientMock().publish("application/${node.applicationUID}/node/${node.deviceUID.uid}/rx", LoRaTransmissionWrapper(transmission))
             //check value update
-            should {
-                val execEnv = node.spyExecContext().executionEnvironment
-                sensors
-                    .filter { it != SensorType.GPS }
-                    .all {
-                        execEnv.get("$it") as Double == sensorData[it]?.let {array ->  DefaultConverter().convert(array.size, array.toMutableList())}
-                }
-            }
+            node.spyExecContext().executionEnvironment.get(Const.IAQLEVEL_KEY) as Double shouldBe 82.125
             node.position shouldBe newPos
         }
     }
