@@ -6,6 +6,7 @@ import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.DestinationNode
 import it.unibo.acdingnet.protelis.node.UserNode
+import it.unibo.acdingnet.protelis.util.Const
 import org.protelis.lang.datatype.impl.StringUID
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
@@ -46,6 +47,7 @@ class UserExecutionContext(
     //TODO
     private fun handleRequestPath(mutPayload: MutableList<Byte>) {
         //TODO put environment variable to start the path
+        execEnvironment.put(Const.ProtelisEnv.SOURCE_KEY, true)
         //update position
         userNode.position = consumeGPSData(mutPayload)
         //TODO create destination node

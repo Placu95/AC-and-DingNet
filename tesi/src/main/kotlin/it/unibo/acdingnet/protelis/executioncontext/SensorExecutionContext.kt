@@ -47,7 +47,7 @@ open class SensorExecutionContext(
             sensorsValue
                 .map { sensor -> IAQCalculator.computeIaqLevel(sensor.key, sensor.value) }
                 .max()
-                ?.let { value -> execEnvironment.put(Const.IAQLEVEL_KEY, value) }
+                ?.let { value -> execEnvironment.put(Const.ProtelisEnv.IAQLEVEL_KEY, value) }
         }
     }
 

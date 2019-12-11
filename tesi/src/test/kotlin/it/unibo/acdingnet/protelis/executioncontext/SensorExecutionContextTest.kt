@@ -72,7 +72,7 @@ class SensorExecutionContextTest : StringSpec() {
             //send message
             MqttClientMock().publish("application/${node.applicationUID}/node/${node.deviceUID.uid}/rx", LoRaTransmissionWrapper(transmission))
             //check value update
-            node.spyExecContext().executionEnvironment.get(Const.IAQLEVEL_KEY) as Double shouldBe 82.125
+            node.spyExecContext().executionEnvironment.get(Const.ProtelisEnv.IAQLEVEL_KEY) as Double shouldBe 82.125
             node.position shouldBe newPos
         }
     }
