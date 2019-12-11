@@ -20,7 +20,7 @@ open class SensorExecutionContext(
     netmgr: NetworkManager,
     randomSeed: Int = 1,
     execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
-    ): PositionedMQTTExecutionContext(sensorNode, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
+    ): MQTTPositionedExecutionContext(sensorNode.deviceUID, sensorNode.position, applicationUID, mqttClient, netmgr, randomSeed, execEnvironment) {
 
     private var sensorsValue: Map<SensorType, Double> = emptyMap()
 
