@@ -1,6 +1,7 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
 import it.unibo.acdingnet.protelis.model.LatLongPosition
+import it.unibo.acdingnet.protelis.util.Const
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.lang.datatype.Tuple
@@ -23,6 +24,11 @@ class DestinationExecutionContext(
     private val execEnvironment: ExecutionEnvironment = SimpleExecutionEnvironment()
     ) : AbstractExecutionContext<DestinationExecutionContext>(execEnvironment, netmgr),
         LocalizedDevice, SpatiallyEmbeddedDevice<Double> {
+
+    init {
+        //add variable env per destination
+        execEnvironment.put(Const.ProtelisEnv.DESTINATION_KEY, true)
+    }
 
     private val randomGenerator = Random(randomSeed)
     private val _coordinates: Tuple by lazy {
