@@ -1,7 +1,5 @@
 package it.unibo.acdingnet.protelis.neighborhood
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.mqtt.MqttMessageType
@@ -34,13 +32,11 @@ class NeighborhoodManager(val applicationUID: String, private val mqttClient: Mq
 
     val neighborhood: MutableMap<Node, MutableSet<Node>> = mutableMapOf()
 
-    private val gson: Gson = GsonBuilder().create()
     private val subscribedTopic: String = "application/$applicationUID/neighborhoodManager"
 
     init {
         mqttClient.connect()
         mqttClient.subscribe(subscribedTopic, NeighborhoodMessage::class.java) {_, msg ->
-                //val msg = gson.fromJson(message, NeighborhoodMessage::class.java)
                 when(msg.type) {
                     NeighborhoodMessage.MessageType.ADD -> addNode(msg.node)
                     NeighborhoodMessage.MessageType.LEAVE -> removeNode(msg.node)
