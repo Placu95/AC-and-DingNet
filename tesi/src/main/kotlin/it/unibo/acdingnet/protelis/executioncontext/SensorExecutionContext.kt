@@ -62,12 +62,10 @@ open class SensorExecutionContext(
 
 object IAQCalculator {
 
-    private val iaqLevel: List<Pair<Int, Int>> = listOf(
-        Pair(0, 25), Pair(25, 50), Pair(50, 75), Pair(75, 100), Pair(100, 125)
-    )
+    private val iaqLevel: List<Pair<Int, Int>> = SensorType.IAQ.levels
     private val sensorsLevel: Map<SensorType, List<Pair<Int, Int>>> = mapOf(
-        Pair(SensorType.PM10, listOf(Pair(0, 25), Pair(25, 50), Pair(50, 90), Pair(90, 180), Pair(180, 255))),
-        Pair(SensorType.NO2, listOf(Pair(0, 50), Pair(50, 100), Pair(100, 200), Pair(200, 400), Pair(400, 600)))
+        SensorType.PM10 to SensorType.PM10.levels,
+        SensorType.NO2 to SensorType.NO2.levels
     )
 
     fun computeIaqLevel(sensorType: SensorType, value: Double): Double {
