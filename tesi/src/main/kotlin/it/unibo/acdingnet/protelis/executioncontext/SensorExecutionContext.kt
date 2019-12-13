@@ -53,7 +53,7 @@ open class SensorExecutionContext(
 
     protected fun consumeGPSData(payload: MutableList<Byte>): LatLongPosition {
         var count = 0
-        val pair = payload.partition { count++ < SensorType.GPS.lenght }
+        val pair = payload.partition { count++ < SensorType.GPS.length }
         payload.removeAll(pair.first)
         val buffer = ByteBuffer.wrap(pair.first.toByteArray())
         return LatLongPosition(buffer.float.toDouble(), buffer.getFloat(Float.SIZE_BYTES).toDouble())
