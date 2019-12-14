@@ -3,6 +3,7 @@ package it.unibo.acdingnet.protelis.executioncontext
 import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.LoRaTransmission
 import it.unibo.acdingnet.protelis.model.MessageType
+import it.unibo.acdingnet.protelis.model.SensorType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.DestinationNode
 import it.unibo.acdingnet.protelis.node.UserNode
@@ -49,9 +50,9 @@ class UserExecutionContext(
         //TODO put environment variable to start the path
         execEnvironment.put(Const.ProtelisEnv.SOURCE_KEY, true)
         //update position
-        userNode.position = consumeGPSData(mutPayload)
+        userNode.position = SensorType.GPS.consumeAndConvert(mutPayload)
         //TODO create destination node
-        destinationPosition = consumeGPSData(mutPayload).also {
+        destinationPosition = SensorType.GPS.consumeAndConvert<LatLongPosition>(mutPayload).also {
             DestinationNode(userNode.protelisProgram, userNode.sleepTime, StringUID(""), applicationUID, mqttClient, it)
         }
     }

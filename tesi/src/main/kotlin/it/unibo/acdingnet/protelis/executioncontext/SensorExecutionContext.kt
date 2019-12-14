@@ -1,17 +1,14 @@
 package it.unibo.acdingnet.protelis.executioncontext
 
-import it.unibo.acdingnet.protelis.model.LatLongPosition
 import it.unibo.acdingnet.protelis.model.LoRaTransmission
 import it.unibo.acdingnet.protelis.model.MessageType
 import it.unibo.acdingnet.protelis.model.SensorType
 import it.unibo.acdingnet.protelis.mqtt.MqttClientBasicApi
 import it.unibo.acdingnet.protelis.node.SensorNode
 import it.unibo.acdingnet.protelis.util.Const
-import it.unibo.acdingnet.protelis.util.SIZE_BYTES
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
 import org.protelis.vm.impl.SimpleExecutionEnvironment
-import java.nio.ByteBuffer
 
 open class SensorExecutionContext(
     private val sensorNode: SensorNode,
@@ -40,8 +37,8 @@ open class SensorExecutionContext(
             payload.removeAt(0)
             sensorNode.sensorTypes.forEach {
                 when (it) {
-                    SensorType.GPS -> sensorNode.position = consumeGPSData(payload)
-                    else -> sensorsValue = sensorsValue.plus(Pair(it, it.convertToDouble(payload)))
+                    SensorType.GPS -> sensorNode.position = it.consumeAndConvert(payload)
+                    else -> sensorsValue = sensorsValue.plus(Pair(it, it.consumeAndConvert(payload)))
                 }
             }
             sensorsValue
@@ -49,14 +46,6 @@ open class SensorExecutionContext(
                 .max()
                 ?.let { value -> execEnvironment.put(Const.ProtelisEnv.IAQLEVEL_KEY, value) }
         }
-    }
-
-    protected fun consumeGPSData(payload: MutableList<Byte>): LatLongPosition {
-        var count = 0
-        val pair = payload.partition { count++ < SensorType.GPS.length }
-        payload.removeAll(pair.first)
-        val buffer = ByteBuffer.wrap(pair.first.toByteArray())
-        return LatLongPosition(buffer.float.toDouble(), buffer.getFloat(Float.SIZE_BYTES).toDouble())
     }
 }
 
